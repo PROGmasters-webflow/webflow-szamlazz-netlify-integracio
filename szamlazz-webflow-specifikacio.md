@@ -351,7 +351,7 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
 <script>
 (function () {
   // ── Beállítások ──────────────────────────────────────────────────────
-  const PROXY_URL = "https://YOUR-SITE.netlify.app/.netlify/functions/szamla";
+  const PROXY_URL = "https://webflow-szamlazz-netlify-integracio.netlify.app/.netlify/functions/szamla";
 
   const form = document.getElementById("szamlazz-form");
   if (!form) return;
