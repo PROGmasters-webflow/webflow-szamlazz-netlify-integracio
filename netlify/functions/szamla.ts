@@ -111,12 +111,12 @@ function buildXml(data: SzamlaRequest, items: SzamlaItem[]): string {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd">
-  <bepipiallitasok>
+  <beallitasok>
     <szamlaagentkulcs>${escapeXml(apiKey)}</szamlaagentkulcs>
     <eszamla>true</eszamla>
     <szamlaLetoltes>false</szamlaLetoltes>
     <valaszVerzio>2</valaszVerzio>
-  </bepipiallitasok>
+  </beallitasok>
   <fejlec>
     <keltDatum>${today()}</keltDatum>
     <teljesitesDatum>${today()}</teljesitesDatum>
