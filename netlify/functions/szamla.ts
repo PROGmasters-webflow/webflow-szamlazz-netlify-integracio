@@ -258,17 +258,22 @@ export default async function handler(req: Request, _context: Context): Promise<
   // ── XML összerakás ───────────────────────────────────────────────────
 
   const xml = buildXml(body, items);
-  console.log("XML request küldése a számlázz.hu felé...");
+  console.log("── Kimenő XML ──────────────────────────────────────");
+  console.log(xml);
 
   // ── Multipart POST a Számlázz.hu felé ────────────────────────────────
 
   const { body: multipartBody, contentType } = buildMultipartBody(xml);
 
+  const requestHeaders = { "Content-Type": contentType };
+  console.log("── Request headers ─────────────────────────────────");
+  console.log(JSON.stringify(requestHeaders, null, 2));
+
   let szamlaResponse: Response;
   try {
     szamlaResponse = await fetch("https://www.szamlazz.hu/szamla/", {
       method: "POST",
-      headers: { "Content-Type": contentType },
+      headers: requestHeaders,
       body: multipartBody,
     });
   } catch (err) {
@@ -282,8 +287,14 @@ export default async function handler(req: Request, _context: Context): Promise<
   // ── Válasz feldolgozás ───────────────────────────────────────────────
 
   const responseText = await szamlaResponse.text();
-  console.log("Számlázz.hu HTTP status:", szamlaResponse.status);
-  console.log("Számlázz.hu válasz:", responseText.substring(0, 500));
+  console.log("── Response HTTP status ─────────────────────────────");
+  console.log(szamlaResponse.status);
+  console.log("── Response headers ─────────────────────────────────");
+  const respHeaders: Record<string, string> = {};
+  szamlaResponse.headers.forEach((value, key) => { respHeaders[key] = value; });
+  console.log(JSON.stringify(respHeaders, null, 2));
+  console.log("── Response body ────────────────────────────────────");
+  console.log(responseText);
 
   // Headers-ből kiolvasás (elsődleges forrás)
   const headerVevoUrl = szamlaResponse.headers.get("szlahu_vevoifiokurl") ?? "";
