@@ -1,0 +1,243 @@
+<!-- Webflow Page Settings → Before </body> tag -->
+<script>
+(function () {
+  // ── Beállítások ──────────────────────────────────────────────────────
+  var PROXY_URL = "https://YOUR-SITE.netlify.app/.netlify/functions/szamla";
+
+  var form = document.getElementById("szamlazz-form");
+  if (!form) return;
+
+  // ── AC-2: URL paraméterek kiolvasása és form pre-fill ────────────────
+  var params = new URLSearchParams(window.location.search);
+
+  // URL paraméter nevek (= form name attribútumok)
+  var prefillFields = [
+    "vezeteknev", "keresztnev", "email", "telefonszam",
+    "megnevezes", "azonosito", "mennyiseg", "mennyisegiEgyseg",
+    "nettoEgysegar", "afakulcs", "nettoErtek", "afaErtek",
+    "bruttoErtek", "kedvezmeny", "rendelesSzam", "szamlaszamElotag"
+  ];
+
+  var hasUrlParams = false;
+
+  prefillFields.forEach(function (name) {
+    var value = params.get(name);
+    if (value) {
+      hasUrlParams = true;
+      var el = form.querySelector('[name="' + name + '"]');
+      if (el) {
+        el.value = value;
+      }
+    }
+  });
+
+  // ── AC-3: Read-only mezők beállítása (csak ha URL paraméterből jöttek) ──
+  var readonlyFields = ["email", "telefonszam"];
+  if (hasUrlParams) {
+    readonlyFields.forEach(function (name) {
+      var el = form.querySelector('[name="' + name + '"]');
+      if (el && el.value) {
+        el.setAttribute("readonly", "readonly");
+      }
+    });
+  }
+
+  // ── AC-5: Összefoglaló blokk kitöltése ──────────────────────────────
+  var summaryEl = document.getElementById("szamla-summary");
+  var itemNameVal = params.get("megnevezes");
+
+  if (summaryEl && itemNameVal) {
+    var quantityVal = params.get("mennyiseg") || "";
+    var unitVal = params.get("mennyisegiEgyseg") || "";
+    var netAmountVal = params.get("nettoErtek") || "";
+    var vatAmountVal = params.get("afaErtek") || "";
+    var grossAmountVal = params.get("bruttoErtek") || "";
+    var discountVal = params.get("kedvezmeny") || "";
+    var orderNumberVal = params.get("rendelesSzam") || "";
+
+    var html = '<h3>Számla összefoglaló</h3>';
+
+    if (orderNumberVal) {
+      html += summaryRow("Rendelésszám", escapeHtml(orderNumberVal));
+    }
+    html += summaryRow("Termék", escapeHtml(itemNameVal));
+    if (quantityVal) {
+      html += summaryRow("Mennyiség", escapeHtml(quantityVal) + (unitVal ? " " + escapeHtml(unitVal) : ""));
+    }
+    if (netAmountVal) {
+      html += summaryRow("Nettó ár", formatHuf(netAmountVal));
+    }
+    if (vatAmountVal) {
+      html += summaryRow("ÁFA", formatHuf(vatAmountVal));
+    }
+    if (discountVal) {
+      html += summaryRow("Kedvezmény", escapeHtml(discountVal) + "%");
+    }
+    if (grossAmountVal) {
+      html += '<div class="summary-row summary-total">';
+      html += '<span class="summary-label">Bruttó összeg</span>';
+      html += '<span class="summary-value">' + formatHuf(grossAmountVal) + '</span>';
+      html += '</div>';
+    }
+
+    summaryEl.innerHTML = html;
+    summaryEl.style.display = "block";
+  }
+
+  function summaryRow(label, value) {
+    return '<div class="summary-row">' +
+      '<span class="summary-label">' + label + '</span>' +
+      '<span class="summary-value">' + value + '</span>' +
+      '</div>';
+  }
+
+  function formatHuf(numStr) {
+    var n = parseInt(numStr, 10);
+    if (isNaN(n)) return escapeHtml(numStr) + " Ft";
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0") + " Ft";
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ── Submit handler ───────────────────────────────────────────────────
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!validateForm()) return;
+
+    var btn = form.querySelector(".szamla-submit");
+    setLoading(btn, true);
+    hideMessages();
+
+    // AC-6: Payload összeállítás
+    var payload = {
+      vezeteknev:     getVal("vezeteknev"),
+      keresztnev:     getVal("keresztnev"),
+      email:          getVal("email"),
+      cegnev:         getVal("cegnev"),
+      adoszam:        getVal("adoszam"),
+      orszag:         getVal("orszag"),
+      irsz:           getVal("irsz"),
+      telepules:      getVal("telepules"),
+      megye:          getVal("megye"),
+      cim:            getVal("cim"),
+      telefonszam:    getVal("telefonszam")
+    };
+
+    // rendelesSzam és szamlaszamElotag hozzáadása, ha van
+    var orderNum = getVal("rendelesSzam");
+    var invPrefix = getVal("szamlaszamElotag");
+    if (orderNum) payload.rendelesSzam = orderNum;
+    if (invPrefix) payload.szamlaszamElotag = invPrefix;
+
+    // Items tömb összeállítása a hidden mezőkből
+    var itemNameField = getVal("megnevezes");
+    if (itemNameField) {
+      var item = {
+        megnevezes: itemNameField,
+        mennyiseg: parseFloat(getVal("mennyiseg")) || 1,
+        mennyisegiEgyseg: getVal("mennyisegiEgyseg") || "db",
+        nettoEgysegar: parseFloat(getVal("nettoEgysegar")) || 0,
+        afakulcs: getVal("afakulcs") || "27",
+        nettoErtek: parseFloat(getVal("nettoErtek")) || 0,
+        afaErtek: parseFloat(getVal("afaErtek")) || 0,
+        bruttoErtek: parseFloat(getVal("bruttoErtek")) || 0
+      };
+
+      var itemIdVal = getVal("azonosito");
+      if (itemIdVal) item.azonosito = itemIdVal;
+
+      var discountField = getVal("kedvezmeny");
+      if (discountField) {
+        item.megjegyzes = "Kedvezmény: " + discountField + "%";
+      }
+
+      payload.items = [item];
+    }
+
+    try {
+      var res = await fetch(PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      var data = await res.json();
+
+      if (res.ok && data.sikeres) {
+        if (data.vevoifiokurl) {
+          window.open(data.vevoifiokurl, "_blank");
+        }
+        showSuccess(
+          "✅ Számla sikeresen kiállítva! " +
+          "Hamarosan e-mailben is megkapja."
+        );
+        form.reset();
+      } else {
+        var msg = data.hibauzenet || data.error
+          || "Hiba történt. Kérjük, próbálja újra.";
+        var code = data.hibakod
+          ? " (hibakód: " + data.hibakod + ")" : "";
+        showError("⚠ " + msg + code);
+      }
+    } catch (err) {
+      console.error("Hálózati hiba:", err);
+      showError("⚠ Hálózati hiba. Kérjük, próbálja újra.");
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+
+  // ── Validáció ────────────────────────────────────────────────────────
+  function validateForm() {
+    var required = [
+      "vezeteknev", "keresztnev", "email",
+      "irsz", "telepules", "cim", "orszag"
+    ];
+    var ok = true;
+    required.forEach(function (name) {
+      var el = form.querySelector('[name="' + name + '"]');
+      if (!el || !el.value.trim()) {
+        if (el) el.classList.add("input-error");
+        ok = false;
+      } else {
+        el.classList.remove("input-error");
+      }
+    });
+    if (!ok) showError("⚠ Kérjük, töltse ki az összes kötelező mezőt.");
+    return ok;
+  }
+
+  // ── Segédfüggvények ──────────────────────────────────────────────────
+  function getVal(name) {
+    var el = form.querySelector('[name="' + name + '"]');
+    return el ? el.value.trim() : "";
+  }
+
+  function setLoading(btn, loading) {
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.textContent = loading ? "Feldolgozás..." : "Számla generálása";
+  }
+
+  function showSuccess(msg) {
+    var el = form.querySelector(".szamla-success");
+    if (el) { el.textContent = msg; el.style.display = "block"; }
+  }
+
+  function showError(msg) {
+    var el = form.querySelector(".szamla-error");
+    if (el) { el.textContent = msg; el.style.display = "block"; }
+  }
+
+  function hideMessages() {
+    form.querySelectorAll(".szamla-msg")
+      .forEach(function (el) { el.style.display = "none"; });
+  }
+}());
+</script>

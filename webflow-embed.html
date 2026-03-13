@@ -1,0 +1,157 @@
+<!-- Webflow Embed Widget: Számlázz.hu Form MiniCRM pre-fill támogatással -->
+<style>
+  #szamlazz-form { font-family: inherit; max-width: 540px; }
+  #szamlazz-form .form-group { margin-bottom: 14px; }
+  #szamlazz-form label {
+    display: block; font-size: 13px;
+    font-weight: 600; margin-bottom: 4px; color: #374151;
+  }
+  #szamlazz-form input {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #D1D5DB; border-radius: 6px;
+    font-size: 15px; box-sizing: border-box;
+  }
+  #szamlazz-form input:focus {
+    outline: none;
+    border-color: #1A56DB; box-shadow: 0 0 0 3px #E5F0FF;
+  }
+  /* AC-4: Read-only mezők vizuális megjelenése */
+  #szamlazz-form input[readonly] {
+    background-color: #F3F4F6;
+    color: #6B7280;
+    cursor: not-allowed;
+  }
+  #szamlazz-form input[readonly]:focus {
+    border-color: #D1D5DB;
+    box-shadow: none;
+  }
+  .input-error {
+    border-color: #EF4444 !important;
+  }
+  .szamla-submit {
+    width: 100%; padding: 12px;
+    background: #1A56DB; color: #fff; border: none;
+    border-radius: 6px; font-size: 16px; font-weight: 600;
+    cursor: pointer; margin-top: 8px;
+  }
+  .szamla-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .szamla-msg {
+    padding: 12px 16px; border-radius: 6px;
+    margin-top: 16px; display: none; font-size: 14px;
+  }
+  .szamla-success { background: #D1FAE5; color: #065F46; }
+  .szamla-error   { background: #FEE2E2; color: #B91C1C; }
+
+  /* AC-5: Összefoglaló blokk */
+  #szamla-summary {
+    display: none;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #374151;
+  }
+  #szamla-summary h3 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+  #szamla-summary .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #F3F4F6;
+  }
+  #szamla-summary .summary-row:last-child { border-bottom: none; }
+  #szamla-summary .summary-label { color: #6B7280; }
+  #szamla-summary .summary-value { font-weight: 600; color: #111827; }
+  #szamla-summary .summary-total {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px solid #E5E7EB;
+    font-size: 16px;
+  }
+</style>
+
+<form id="szamlazz-form" novalidate>
+
+  <!-- AC-5: Összefoglaló blokk a termék adatokról -->
+  <div id="szamla-summary"></div>
+
+  <!-- Személyes adatok – AC-3: Kitöltött és módosítható -->
+  <div class="form-group">
+    <label>Vezetéknév *</label>
+    <input name="vezeteknev" type="text" required>
+  </div>
+  <div class="form-group">
+    <label>Keresztnév *</label>
+    <input name="keresztnev" type="text" required>
+  </div>
+
+  <!-- AC-3: Kitöltött és NEM módosítható (readonly) -->
+  <div class="form-group">
+    <label>E-mail cím *</label>
+    <input name="email" type="email" required>
+  </div>
+  <div class="form-group">
+    <label>Telefonszám</label>
+    <input name="telefonszam" type="tel">
+  </div>
+
+  <!-- Céges adatok (opcionális, módosítható) -->
+  <div class="form-group">
+    <label>Cég neve</label>
+    <input name="cegnev" type="text">
+  </div>
+  <div class="form-group">
+    <label>Adószám</label>
+    <input name="adoszam" type="text" placeholder="12345678-2-42">
+  </div>
+
+  <!-- Számlázási cím – AC-3: Módosítható -->
+  <div class="form-group">
+    <label>Ország *</label>
+    <input name="orszag" type="text" value="Magyarország" required>
+  </div>
+  <div class="form-group">
+    <label>Irányítószám *</label>
+    <input name="irsz" type="text" required>
+  </div>
+  <div class="form-group">
+    <label>Város *</label>
+    <input name="telepules" type="text" required>
+  </div>
+  <div class="form-group">
+    <label>Megye</label>
+    <input name="megye" type="text">
+  </div>
+  <div class="form-group">
+    <label>Utca, házszám *</label>
+    <input name="cim" type="text" required>
+  </div>
+
+  <!-- AC-3: Rejtett mezők – termék/számlázási adatok -->
+  <input type="hidden" name="megnevezes">
+  <input type="hidden" name="azonosito">
+  <input type="hidden" name="mennyiseg">
+  <input type="hidden" name="mennyisegiEgyseg">
+  <input type="hidden" name="nettoEgysegar">
+  <input type="hidden" name="afakulcs">
+  <input type="hidden" name="nettoErtek">
+  <input type="hidden" name="afaErtek">
+  <input type="hidden" name="bruttoErtek">
+  <input type="hidden" name="kedvezmeny">
+  <input type="hidden" name="rendelesSzam">
+  <input type="hidden" name="szamlaszamElotag">
+
+  <button type="submit" class="szamla-submit">
+    Számla generálása
+  </button>
+
+  <div class="szamla-msg szamla-success"></div>
+  <div class="szamla-msg szamla-error"></div>
+
+</form>

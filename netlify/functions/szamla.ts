@@ -4,6 +4,7 @@ import type { Context } from "@netlify/functions";
 
 interface SzamlaItem {
   megnevezes: string;
+  azonosito?: string;
   mennyiseg: number;
   mennyisegiEgyseg: string;
   nettoEgysegar: number;
@@ -26,7 +27,9 @@ interface SzamlaRequest {
   adoszam?: string;
   bankszamlaszam?: string;
   megye?: string;
-  telefon?: string;
+  telefonszam?: string;
+  rendelesSzam?: string;
+  szamlaszamElotag?: string;
   items?: SzamlaItem[];
 }
 
@@ -85,7 +88,7 @@ function buildItemsXml(items: SzamlaItem[]): string {
   return items
     .map(
       (item) => `    <tetel>
-      <megnevezes>${escapeXml(item.megnevezes)}</megnevezes>
+      <megnevezes>${escapeXml(item.megnevezes)}</megnevezes>${item.azonosito ? `\n      <azonosito>${escapeXml(item.azonosito)}</azonosito>` : ""}
       <mennyiseg>${item.mennyiseg}</mennyiseg>
       <mennyisegiEgyseg>${escapeXml(item.mennyisegiEgyseg)}</mennyisegiEgyseg>
       <nettoEgysegar>${item.nettoEgysegar}</nettoEgysegar>
@@ -103,11 +106,12 @@ function buildXml(data: SzamlaRequest, items: SzamlaItem[]): string {
   const fizmod = env("FIZMOD", "Átutalás");
   const penznem = env("PENZNEM", "HUF");
   const nyelv = env("SZAMLA_NYELVE", "hu");
-  const elotag = env("SZAMLASZAM_ELOTAG");
+  const elotag = data.szamlaszamElotag || env("SZAMLASZAM_ELOTAG");
   const dueDays = parseInt(env("PAYMENT_DUE_DAYS", "8"), 10);
 
   const vevoNev = data.cegnev || `${data.vezeteknev} ${data.keresztnev}`;
   const megjegyzes = data.megye ? `Megye: ${data.megye}` : "";
+  const rendelesSzam = data.rendelesSzam || "";
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xsds/agent/xmlszamla.xsd">
@@ -123,7 +127,7 @@ function buildXml(data: SzamlaRequest, items: SzamlaItem[]): string {
     <fizetesiHataridoDatum>${addDays(dueDays)}</fizetesiHataridoDatum>
     <fizmod>${escapeXml(fizmod)}</fizmod>
     <penznem>${escapeXml(penznem)}</penznem>
-    <szamlaNyelve>${escapeXml(nyelv)}</szamlaNyelve>${elotag ? `\n    <szamlaszamElotag>${escapeXml(elotag)}</szamlaszamElotag>` : ""}${megjegyzes ? `\n    <megjegyzes>${escapeXml(megjegyzes)}</megjegyzes>` : ""}
+    <szamlaNyelve>${escapeXml(nyelv)}</szamlaNyelve>${elotag ? `\n    <szamlaszamElotag>${escapeXml(elotag)}</szamlaszamElotag>` : ""}${rendelesSzam ? `\n    <rendelesSzam>${escapeXml(rendelesSzam)}</rendelesSzam>` : ""}${megjegyzes ? `\n    <megjegyzes>${escapeXml(megjegyzes)}</megjegyzes>` : ""}
   </fejlec>
   <elado>
     <bank>${escapeXml(env("ELADO_BANK", "OTP Bank"))}</bank>
@@ -139,7 +143,7 @@ function buildXml(data: SzamlaRequest, items: SzamlaItem[]): string {
     <telepules>${escapeXml(data.telepules)}</telepules>
     <cim>${escapeXml(data.cim)}</cim>
     <email>${escapeXml(data.email)}</email>
-    <sendEmail>true</sendEmail>${data.adoszam ? `\n    <adoszam>${escapeXml(data.adoszam)}</adoszam>` : ""}${data.telefon ? `\n    <telefonszam>${escapeXml(data.telefon)}</telefonszam>` : ""}
+    <sendEmail>true</sendEmail>${data.adoszam ? `\n    <adoszam>${escapeXml(data.adoszam)}</adoszam>` : ""}${data.telefonszam ? `\n    <telefonszam>${escapeXml(data.telefonszam)}</telefonszam>` : ""}
   </vevo>
   <tetelek>
 ${buildItemsXml(items)}
