@@ -1,19 +1,69 @@
 <!-- Webflow Embed Widget: Számlázz.hu Form MiniCRM pre-fill támogatással -->
 <style>
-  #szamlazz-form { font-family: inherit; max-width: 540px; }
-  #szamlazz-form .form-group { margin-bottom: 14px; }
+  #szamlazz-form {
+    font-family: inherit;
+    width: 100%;
+    max-width: 896px;
+    margin: 0 auto;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  #szamlazz-form .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #szamlazz-form .form-section h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: inherit;
+    margin: 0 0 4px 0;
+  }
+  #szamlazz-form .form-divider {
+    border: none;
+    border-top: 1px solid #E5E7EB;
+    margin: 24px 0;
+  }
+  #szamlazz-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 768px) {
+    #szamlazz-form .form-row--2col {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  #szamlazz-form .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+  }
   #szamlazz-form label {
-    display: block; font-size: 13px;
-    font-weight: 600; margin-bottom: 4px; color: #374151;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: inherit;
+    margin-bottom: 6px;
+  }
+  #szamlazz-form label .req {
+    color: #DC2626;
   }
   #szamlazz-form input {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid #D1D5DB; border-radius: 6px;
-    font-size: 15px; box-sizing: border-box;
+    width: 100%;
+    padding: 8px 16px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    font-size: 15px;
+    background: transparent;
+    color: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
   #szamlazz-form input:focus {
     outline: none;
-    border-color: #1A56DB; box-shadow: 0 0 0 3px #E5F0FF;
+    border-color: #1A56DB;
+    box-shadow: 0 0 0 2px rgba(26, 86, 219, 0.3);
   }
   /* AC-4: Read-only mezők vizuális megjelenése */
   #szamlazz-form input[readonly] {
@@ -29,15 +79,30 @@
     border-color: #EF4444 !important;
   }
   .szamla-submit {
-    width: 100%; padding: 12px;
-    background: #1A56DB; color: #fff; border: none;
-    border-radius: 6px; font-size: 16px; font-weight: 600;
-    cursor: pointer; margin-top: 8px;
+    width: 100%;
+    padding: 12px 24px;
+    background: #1A56DB;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+  .szamla-submit:hover { background: rgba(26, 86, 219, 0.9); }
+  .szamla-submit:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(26, 86, 219, 0.3);
   }
   .szamla-submit:disabled { opacity: .6; cursor: not-allowed; }
   .szamla-msg {
-    padding: 12px 16px; border-radius: 6px;
-    margin-top: 16px; display: none; font-size: 14px;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    display: none;
+    font-size: 14px;
   }
   .szamla-success { background: #D1FAE5; color: #065F46; }
   .szamla-error   { background: #FEE2E2; color: #B91C1C; }
@@ -81,56 +146,87 @@
   <!-- AC-5: Összefoglaló blokk a termék adatokról -->
   <div id="szamla-summary"></div>
 
-  <!-- Személyes adatok – AC-3: Kitöltött és módosítható -->
-  <div class="form-group">
-    <label>Vezetéknév *</label>
-    <input name="vezeteknev" type="text" required>
-  </div>
-  <div class="form-group">
-    <label>Keresztnév *</label>
-    <input name="keresztnev" type="text" required>
+  <!-- Section 1: Személyes adatok -->
+  <div class="form-section">
+    <h3>Személyes adatok</h3>
+
+    <div class="form-row form-row--2col">
+      <div class="form-group">
+        <label>Vezetéknév <span class="req">*</span></label>
+        <input name="vezeteknev" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Keresztnév <span class="req">*</span></label>
+        <input name="keresztnev" type="text" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>E-mail cím <span class="req">*</span></label>
+      <input name="email" type="email" required>
+    </div>
+
+    <div class="form-group">
+      <label>Telefonszám</label>
+      <input name="telefonszam" type="tel">
+    </div>
   </div>
 
-  <!-- AC-3: Kitöltött és NEM módosítható (readonly) -->
-  <div class="form-group">
-    <label>E-mail cím *</label>
-    <input name="email" type="email" required>
-  </div>
-  <div class="form-group">
-    <label>Telefonszám</label>
-    <input name="telefonszam" type="tel">
+  <hr class="form-divider">
+
+  <!-- Section 2: Céges adatok -->
+  <div class="form-section">
+    <h3>Céges adatok (opcionális)</h3>
+
+    <div class="form-group">
+      <label>Cég neve</label>
+      <input name="cegnev" type="text">
+    </div>
+
+    <div class="form-row form-row--2col">
+      <div class="form-group">
+        <label>Adószám</label>
+        <input name="adoszam" type="text" placeholder="12345678-2-42">
+      </div>
+      <div class="form-group">
+        <label>Bankszámlaszám</label>
+        <input name="bankszamlaszam" type="text">
+      </div>
+    </div>
   </div>
 
-  <!-- Céges adatok (opcionális, módosítható) -->
-  <div class="form-group">
-    <label>Cég neve</label>
-    <input name="cegnev" type="text">
-  </div>
-  <div class="form-group">
-    <label>Adószám</label>
-    <input name="adoszam" type="text" placeholder="12345678-2-42">
-  </div>
+  <hr class="form-divider">
 
-  <!-- Számlázási cím – AC-3: Módosítható -->
-  <div class="form-group">
-    <label>Ország *</label>
-    <input name="orszag" type="text" value="Magyarország" required>
-  </div>
-  <div class="form-group">
-    <label>Irányítószám *</label>
-    <input name="irsz" type="text" required>
-  </div>
-  <div class="form-group">
-    <label>Város *</label>
-    <input name="telepules" type="text" required>
-  </div>
-  <div class="form-group">
-    <label>Megye</label>
-    <input name="megye" type="text">
-  </div>
-  <div class="form-group">
-    <label>Utca, házszám *</label>
-    <input name="cim" type="text" required>
+  <!-- Section 3: Számlázási cím -->
+  <div class="form-section">
+    <h3>Számlázási cím</h3>
+
+    <div class="form-group">
+      <label>Ország <span class="req">*</span></label>
+      <input name="orszag" type="text" value="Magyarország" required>
+    </div>
+
+    <div class="form-row form-row--2col">
+      <div class="form-group">
+        <label>Irányítószám <span class="req">*</span></label>
+        <input name="irsz" type="text" required>
+      </div>
+      <div class="form-group">
+        <label>Város <span class="req">*</span></label>
+        <input name="telepules" type="text" required>
+      </div>
+    </div>
+
+    <div class="form-row form-row--2col">
+      <div class="form-group">
+        <label>Megye</label>
+        <input name="megye" type="text">
+      </div>
+      <div class="form-group">
+        <label>Utca, házszám <span class="req">*</span></label>
+        <input name="cim" type="text" required>
+      </div>
+    </div>
   </div>
 
   <!-- AC-3: Rejtett mezők – termék/számlázási adatok -->
