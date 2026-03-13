@@ -71,7 +71,7 @@ projekt-gyoker/
 | Metódus | `POST` |
 | Content-Type (request) | `application/json` |
 | Content-Type (response) | `application/json` |
-| CORS | A function kódja kezeli programatikusan (`ALLOWED_ORIGINS` env var alapján, OPTIONS preflight támogatással) |
+| CORS | Netlify headers konfig kezeli |
 
 ### 2.3 Request payload (JSON)
 
@@ -189,8 +189,7 @@ A számlázz.hu HTTP response két helyről adja vissza a `vevoifiokurl`-t:
 | `SZAMLA_NYELVE` | – | `hu` | Számla nyelve (`hu`, `en`, `de`, `it`, `ro`, `sk`, `hr`, `fr`, `es`, `cz`, `pl`, `bg`, `nl`, `ru`, `si`) |
 | `SZAMLASZAM_ELOTAG` | – | *(üres)* | Számlaszám prefix (pl. `DIJ` → `DIJ-2026-0001`) |
 | `PAYMENT_DUE_DAYS` | – | `8` | Fizetési határidő napokban |
-| `ALLOWED_ORIGINS` | ✅ | – | Webflow domain(ek), vesszővel elválasztva – a function kódja ezek alapján állítja be a CORS fejléceket és kezeli az OPTIONS preflight-ot |
-| `NETLIFY_DEFAULT_ITEMS` | – | – | Alapértelmezett számlázási tételek JSON tömbként (ld. 2.4 pont); ha a request nem tartalmaz `items` mezőt, ebből töltődik be |
+| `ALLOWED_ORIGINS` | ✅ | – | Webflow domain(ek), CORS whitelist |
 
 ### Netlify dashboard beállítás
 
@@ -352,7 +351,7 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
 <script>
 (function () {
   // ── Beállítások ──────────────────────────────────────────────────────
-  const PROXY_URL = "https://webflow-szamlazz-netlify-integracio.netlify.app/.netlify/functions/szamla";
+  const PROXY_URL = "https://YOUR-SITE.netlify.app/.netlify/functions/szamla";
 
   const form = document.getElementById("szamlazz-form");
   if (!form) return;
@@ -477,9 +476,14 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
 [build]
   command   = "npm run build"
   functions = "netlify/functions"
-```
 
-> **Megjegyzés:** A CORS fejléceket nem a `netlify.toml` kezeli, hanem a function kódja programatikusan az `ALLOWED_ORIGINS` környezeti változó alapján. Az OPTIONS preflight kéréseket is a function kezeli.
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin  = "https://sajatoldalad.webflow.io"
+    Access-Control-Allow-Methods = "POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+```
 
 ### 6.2 Deploy lépések
 
@@ -529,6 +533,6 @@ netlify dev
 
 Ha a Webflow oldal CORS hibát dob a böngészőben, ellenőrizd:
 
-- `ALLOWED_ORIGINS` környezeti változó tartalmazza-e a Webflow domaint (több domain vesszővel elválasztva adható meg)
-- A Webflow oldalad URL-je pontosan egyezik-e az `ALLOWED_ORIGINS`-ben megadottal (http vs https, trailing slash nélkül)
-- Netlify deploy után frissültek-e a környezeti változók
+- `netlify.toml` → `Access-Control-Allow-Origin` tartalmazza-e a Webflow domaint
+- A Webflow oldalad URL-je pontosan egyezik-e (http vs https, trailing slash)
+- Netlify deploy után újra lett-e deployolva a konfig
