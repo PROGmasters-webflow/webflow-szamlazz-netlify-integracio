@@ -33,26 +33,26 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 
 | URL paraméter | Leírás | XSD megfeleltetés | Példa |
 |---|---|---|---|
-| `lastName` | Vevő vezetékneve | `vevo > nev` (összetétel) | `Kovács` |
-| `firstName` | Vevő keresztneve | `vevo > nev` (összetétel) | `János` |
+| `vezeteknev` | Vevő vezetékneve | `vevo > nev` (összetétel) | `Kovács` |
+| `keresztnev` | Vevő keresztneve | `vevo > nev` (összetétel) | `János` |
 | `email` | E-mail cím | `vevo > email` | `kovacs@example.com` |
-| `phone` | Telefonszám | `vevo > telefonszam` | `+36301234567` |
-| `itemName` | Tétel megnevezése | `tetel > megnevezes` | `Üzleti coaching - 5 alkalom` |
-| `itemId` | Tétel/termék azonosítója | `tetel > azonosito` | `COACH-5` |
-| `quantity` | Mennyiség | `tetel > mennyiseg` | `1` |
-| `unit` | Mennyiségi egység | `tetel > mennyisegiEgyseg` | `db` |
-| `netUnitPrice` | Nettó egységár | `tetel > nettoEgysegar` | `100000` |
-| `vatRate` | ÁFA kulcs | `tetel > afakulcs` | `27` |
-| `netAmount` | Nettó érték | `tetel > nettoErtek` | `100000` |
-| `vatAmount` | ÁFA érték | `tetel > afaErtek` | `27000` |
-| `grossAmount` | Bruttó érték | `tetel > bruttoErtek` | `127000` |
-| `discount` | Kedvezmény mértéke (%) | `tetel > megjegyzes`-be kerül | `10` |
-| `orderNumber` | Rendelésszám | `fejlec > rendelesSzam` | `ORD-2026-0042` |
-| `invoicePrefix` | Számlaszám előtag | `fejlec > szamlaszamElotag` | `DIJ` |
+| `telefonszam` | Telefonszám | `vevo > telefonszam` | `+36301234567` |
+| `megnevezes` | Tétel megnevezése | `tetel > megnevezes` | `Üzleti coaching - 5 alkalom` |
+| `azonosito` | Tétel/termék azonosítója | `tetel > azonosito` | `COACH-5` |
+| `mennyiseg` | Mennyiség | `tetel > mennyiseg` | `1` |
+| `mennyisegiEgyseg` | Mennyiségi egység | `tetel > mennyisegiEgyseg` | `db` |
+| `nettoEgysegar` | Nettó egységár | `tetel > nettoEgysegar` | `100000` |
+| `afakulcs` | ÁFA kulcs | `tetel > afakulcs` | `27` |
+| `nettoErtek` | Nettó érték | `tetel > nettoErtek` | `100000` |
+| `afaErtek` | ÁFA érték | `tetel > afaErtek` | `27000` |
+| `bruttoErtek` | Bruttó érték | `tetel > bruttoErtek` | `127000` |
+| `kedvezmeny` | Kedvezmény mértéke (%) | `tetel > megjegyzes`-be kerül | `10` |
+| `rendelesSzam` | Rendelésszám | `fejlec > rendelesSzam` | `ORD-2026-0042` |
+| `szamlaszamElotag` | Számlaszám előtag | `fejlec > szamlaszamElotag` | `DIJ` |
 
 - Példa teljes URL:
   ```
-  https://domain.hu/szamla?lastName=Kov%C3%A1cs&firstName=J%C3%A1nos&email=kovacs%40example.com&phone=%2B36301234567&itemName=%C3%9Czleti+coaching&itemId=COACH-5&quantity=1&unit=db&netUnitPrice=100000&vatRate=27&netAmount=100000&vatAmount=27000&grossAmount=127000&discount=10&orderNumber=ORD-2026-0042&invoicePrefix=DIJ
+  https://domain.hu/szamla?vezeteknev=Kov%C3%A1cs&keresztnev=J%C3%A1nos&email=kovacs%40example.com&telefonszam=%2B36301234567&megnevezes=%C3%9Czleti+coaching&azonosito=COACH-5&mennyiseg=1&mennyisegiEgyseg=db&nettoEgysegar=100000&afakulcs=27&nettoErtek=100000&afaErtek=27000&bruttoErtek=127000&kedvezmeny=10&rendelesSzam=ORD-2026-0042&szamlaszamElotag=DIJ
   ```
 
 ### AC-2: Form pre-fill URL paraméterekből
@@ -64,8 +64,8 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 **Kitöltött és módosítható mezők (normál megjelenés):**
 | Mező | URL paraméter | form `name` |
 |---|---|---|
-| Vezetéknév | `lastName` | `vezeteknev` |
-| Keresztnév | `firstName` | `keresztnev` |
+| Vezetéknév | `vezeteknev` | `vezeteknev` |
+| Keresztnév | `keresztnev` | `keresztnev` |
 | Cég neve | – | `cegnev` |
 | Adószám | – | `adoszam` |
 | Ország | – | `orszag` |
@@ -78,23 +78,23 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 | Mező | URL paraméter | form `name` |
 |---|---|---|
 | E-mail cím | `email` | `email` |
-| Telefonszám | `phone` | `telefon` |
+| Telefonszám | `telefonszam` | `telefonszam` |
 
 **Rejtett mezők (`type="hidden"`) – termék/számlázási adatok:**
 | Mező | URL paraméter | form `name` |
 |---|---|---|
-| Tétel megnevezése | `itemName` | `itemName` |
-| Tétel azonosítója | `itemId` | `itemId` |
-| Mennyiség | `quantity` | `quantity` |
-| Mennyiségi egység | `unit` | `unit` |
-| Nettó egységár | `netUnitPrice` | `netUnitPrice` |
-| ÁFA kulcs | `vatRate` | `vatRate` |
-| Nettó érték | `netAmount` | `netAmount` |
-| ÁFA érték | `vatAmount` | `vatAmount` |
-| Bruttó érték | `grossAmount` | `grossAmount` |
-| Kedvezmény (%) | `discount` | `discount` |
-| Rendelésszám | `orderNumber` | `orderNumber` |
-| Számlaszám előtag | `invoicePrefix` | `invoicePrefix` |
+| Tétel megnevezése | `megnevezes` | `megnevezes` |
+| Tétel azonosítója | `azonosito` | `azonosito` |
+| Mennyiség | `mennyiseg` | `mennyiseg` |
+| Mennyiségi egység | `mennyisegiEgyseg` | `mennyisegiEgyseg` |
+| Nettó egységár | `nettoEgysegar` | `nettoEgysegar` |
+| ÁFA kulcs | `afakulcs` | `afakulcs` |
+| Nettó érték | `nettoErtek` | `nettoErtek` |
+| ÁFA érték | `afaErtek` | `afaErtek` |
+| Bruttó érték | `bruttoErtek` | `bruttoErtek` |
+| Kedvezmény (%) | `kedvezmeny` | `kedvezmeny` |
+| Rendelésszám | `rendelesSzam` | `rendelesSzam` |
+| Számlaszám előtag | `szamlaszamElotag` | `szamlaszamElotag` |
 
 ### AC-4: Read-only mezők vizuális megjelenése
 - A `readonly` mezők szürke háttérrel (`#F3F4F6`) és halványabb szövegszínnel (`#6B7280`) jelennek meg
@@ -118,13 +118,13 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
   "vezeteknev": "Kovács",
   "keresztnev": "János",
   "email": "kovacs@example.com",
-  "telefon": "+36301234567",
+  "telefonszam": "+36301234567",
   "irsz": "1234",
   "telepules": "Budapest",
   "cim": "Fő utca 1.",
   "orszag": "Magyarország",
-  "orderNumber": "ORD-2026-0042",
-  "invoicePrefix": "DIJ",
+  "rendelesSzam": "ORD-2026-0042",
+  "szamlaszamElotag": "DIJ",
   "items": [
     {
       "megnevezes": "Üzleti coaching",
@@ -144,13 +144,13 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 
 ### AC-7: Backend módosítások (`szamla.ts`)
 - A `SzamlaRequest` interface bővül két opcionális mezővel:
-  - `orderNumber?: string` → XML `fejlec > rendelesSzam`
-  - `invoicePrefix?: string` → XML `fejlec > szamlaszamElotag` (felülírja az env var-t, ha megadva)
+  - `rendelesSzam?: string` → XML `fejlec > rendelesSzam`
+  - `szamlaszamElotag?: string` → XML `fejlec > szamlaszamElotag` (felülírja az env var-t, ha megadva)
 - A `SzamlaItem` interface bővül:
   - `azonosito?: string` → XML `tetel > azonosito`
 - A `buildXml` függvényben:
-  - Ha `data.orderNumber` megadva → `<rendelesSzam>` elem hozzáadása a fejléchez
-  - Ha `data.invoicePrefix` megadva → `<szamlaszamElotag>` felülírása
+  - Ha `data.rendelesSzam` megadva → `<rendelesSzam>` elem hozzáadása a fejléchez
+  - Ha `data.szamlaszamElotag` megadva → `<szamlaszamElotag>` felülírása
   - Ha item-ben `azonosito` megadva → `<azonosito>` elem hozzáadása a tételhez
 
 ### AC-8: URL paraméterek nélküli működés
@@ -162,10 +162,10 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 ## Megvalósítási terv
 
 ### 1. fázis – Backend bővítés (`szamla.ts`)
-1. `SzamlaRequest` interface bővítése: `orderNumber`, `invoicePrefix`
+1. `SzamlaRequest` interface bővítése: `rendelesSzam`, `szamlaszamElotag`
 2. `SzamlaItem` interface bővítése: `azonosito`
 3. `buildItemsXml` bővítése az `azonosito` elem generálásával
-4. `buildXml` bővítése: `rendelesSzam`, `szamlaszamElotag` felülírás `invoicePrefix`-szel
+4. `buildXml` bővítése: `rendelesSzam`, `szamlaszamElotag` felülírás
 5. Tesztelés helyi Netlify CLI-vel
 
 ### 2. fázis – Webflow Form HTML bővítés
@@ -178,7 +178,7 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 2. Form mezők pre-fill logika
 3. Read-only attribútum beállítása az érintett mezőkre
 4. Összefoglaló blokk kitöltése az URL paraméterekből
-5. Submit handler bővítése: hidden mezők + `items` tömb + `orderNumber`/`invoicePrefix` beépítése a payloadba
+5. Submit handler bővítése: hidden mezők + `items` tömb + `rendelesSzam`/`szamlaszamElotag` beépítése a payloadba
 
 ### 4. fázis – MiniCRM sablon konfigurálás
 1. MiniCRM sablon levélben a link URL összeállítása a kontakt és termék mezőkből
@@ -206,19 +206,19 @@ Jelenleg a Webflow form egy üres űrlapot jelenít meg, amelyet a felhasználó
 
 | URL param | Form `name` | JSON payload mező | XML elem (XSD) | XSD típus |
 |---|---|---|---|---|
-| `lastName` | `vezeteknev` | `vezeteknev` | `vevo > nev` (részeként) | `string` |
-| `firstName` | `keresztnev` | `keresztnev` | `vevo > nev` (részeként) | `string` |
+| `vezeteknev` | `vezeteknev` | `vezeteknev` | `vevo > nev` (részeként) | `string` |
+| `keresztnev` | `keresztnev` | `keresztnev` | `vevo > nev` (részeként) | `string` |
 | `email` | `email` | `email` | `vevo > email` | `string` |
-| `phone` | `telefon` | `telefon` | `vevo > telefonszam` | `string` |
-| `itemName` | `itemName` | `items[0].megnevezes` | `tetel > megnevezes` | `string` |
-| `itemId` | `itemId` | `items[0].azonosito` | `tetel > azonosito` | `string` |
-| `quantity` | `quantity` | `items[0].mennyiseg` | `tetel > mennyiseg` | `double` |
-| `unit` | `unit` | `items[0].mennyisegiEgyseg` | `tetel > mennyisegiEgyseg` | `string` |
-| `netUnitPrice` | `netUnitPrice` | `items[0].nettoEgysegar` | `tetel > nettoEgysegar` | `double` |
-| `vatRate` | `vatRate` | `items[0].afakulcs` | `tetel > afakulcs` | `string` |
-| `netAmount` | `netAmount` | `items[0].nettoErtek` | `tetel > nettoErtek` | `double` |
-| `vatAmount` | `vatAmount` | `items[0].afaErtek` | `tetel > afaErtek` | `double` |
-| `grossAmount` | `grossAmount` | `items[0].bruttoErtek` | `tetel > bruttoErtek` | `double` |
-| `discount` | `discount` | `items[0].megjegyzes` (részeként) | `tetel > megjegyzes` | `string` |
-| `orderNumber` | `orderNumber` | `orderNumber` | `fejlec > rendelesSzam` | `string` |
-| `invoicePrefix` | `invoicePrefix` | `invoicePrefix` | `fejlec > szamlaszamElotag` | `string` |
+| `telefonszam` | `telefonszam` | `telefonszam` | `vevo > telefonszam` | `string` |
+| `megnevezes` | `megnevezes` | `items[0].megnevezes` | `tetel > megnevezes` | `string` |
+| `azonosito` | `azonosito` | `items[0].azonosito` | `tetel > azonosito` | `string` |
+| `mennyiseg` | `mennyiseg` | `items[0].mennyiseg` | `tetel > mennyiseg` | `double` |
+| `mennyisegiEgyseg` | `mennyisegiEgyseg` | `items[0].mennyisegiEgyseg` | `tetel > mennyisegiEgyseg` | `string` |
+| `nettoEgysegar` | `nettoEgysegar` | `items[0].nettoEgysegar` | `tetel > nettoEgysegar` | `double` |
+| `afakulcs` | `afakulcs` | `items[0].afakulcs` | `tetel > afakulcs` | `string` |
+| `nettoErtek` | `nettoErtek` | `items[0].nettoErtek` | `tetel > nettoErtek` | `double` |
+| `afaErtek` | `afaErtek` | `items[0].afaErtek` | `tetel > afaErtek` | `double` |
+| `bruttoErtek` | `bruttoErtek` | `items[0].bruttoErtek` | `tetel > bruttoErtek` | `double` |
+| `kedvezmeny` | `kedvezmeny` | `items[0].megjegyzes` (részeként) | `tetel > megjegyzes` | `string` |
+| `rendelesSzam` | `rendelesSzam` | `rendelesSzam` | `fejlec > rendelesSzam` | `string` |
+| `szamlaszamElotag` | `szamlaszamElotag` | `szamlaszamElotag` | `fejlec > szamlaszamElotag` | `string` |

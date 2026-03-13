@@ -88,7 +88,7 @@ projekt-gyoker/
 | `adoszam` | string | – | Adószám (pl. `12345678-2-42`) |
 | `bankszamlaszam` | string | – | Bankszámlaszám |
 | `megye` | string | – | Megye (megjegyzésbe kerül) |
-| `telefon` | string | – | Telefonszám |
+| `telefonszam` | string | – | Telefonszám |
 | `items` | array | – | Tételek (ld. 2.4 pont); ha üres, `DEFAULT_ITEMS` használatos |
 
 ### 2.4 Items tömb struktúrája
@@ -157,7 +157,7 @@ A backend a JSON payload alapján összerakja az `xmlszamla` névterű XML dokum
 
 > **Vevő `nev` mező:** A Számlázz.hu XML-ben egyetlen `<nev>` elem van. A backend a `vezeteknev` és `keresztnev` mezőket összefűzi (pl. `"Kovács János"`). Ha `cegnev` is meg van adva, az kerül a `<nev>` elembe.
 
-> **Vevő `telefonszam`:** A form `telefon` mezője az XML `<telefonszam>` elembe kerül.
+> **Vevő `telefonszam`:** A form `telefonszam` mezője az XML `<telefonszam>` elembe kerül.
 
 > **Vevő `sendEmail`:** Az XML `<sendEmail>` értéke mindig `true` (e-számla e-mailben kerül kiküldésre).
 
@@ -235,7 +235,7 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
 | `adoszam` | `text` | Adószám | – |
 | `bankszamlaszam` | `text` | Bankszámlaszám | – |
 | `megye` | `text` | Megye | – |
-| `telefon` | `tel` | Telefonszám | – |
+| `telefonszam` | `tel` | Telefonszám | – |
 
 ### 4.3 Teljes Embed HTML kód
 
@@ -320,7 +320,7 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
   </div>
   <div class="form-group">
     <label>Telefonszám</label>
-    <input name="telefon" type="tel">
+    <input name="telefonszam" type="tel">
   </div>
 
   <button type="submit" class="szamla-submit">
@@ -379,7 +379,7 @@ Az input mezők `name` attribútuma pontosan meg kell egyezzen az alábbi érté
       telepules:      getVal("telepules"),
       megye:          getVal("megye"),
       cim:            getVal("cim"),
-      telefon:        getVal("telefon"),
+      telefonszam:    getVal("telefonszam"),
       // items: []  // Ha fix tételeket küldesz, add hozzá itt
     };
 
