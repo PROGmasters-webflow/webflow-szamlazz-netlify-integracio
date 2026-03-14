@@ -313,7 +313,10 @@ export default async function handler(req: Request, _context: Context): Promise<
 
   // Sikeres-e?
   const sikeres = xmlSikeres === "true" || (szamlaResponse.ok && !headerError && !xmlHibakod);
-  const vevoifiokurl = headerVevoUrl || xmlVevoUrl;
+  // A szlahu_vevoifiokurl header URL-kódolt lehet (https%3A%2F%2F...), ami
+  // a böngészőben relatív útvonalként értelmeződik window.open()-nel.
+  const rawVevoUrl = headerVevoUrl || xmlVevoUrl;
+  const vevoifiokurl = rawVevoUrl ? decodeURIComponent(rawVevoUrl) : "";
 
   if (sikeres && vevoifiokurl) {
     return new Response(
