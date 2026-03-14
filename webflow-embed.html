@@ -110,7 +110,7 @@
   /* AC-5: Összefoglaló blokk */
   #szamla-summary {
     display: none;
-    background: #F9FAFB;
+    background: rgb(236, 246, 248);
     border: 1px solid #E5E7EB;
     border-radius: 8px;
     padding: 16px 20px;
@@ -186,10 +186,10 @@
     <div class="form-row form-row--2col">
       <div class="form-group">
         <label>Adószám</label>
-        <input name="adoszam" type="text" placeholder="12345678-2-42">
+        <input name="adoszam" type="text">
       </div>
       <div class="form-group">
-        <label>Bankszámlaszám</label>
+        <label>Bankszámlaszám (opcionális)</label>
         <input name="bankszamlaszam" type="text">
       </div>
     </div>
@@ -206,7 +206,7 @@
       <input name="orszag" type="text" value="Magyarország" required>
     </div>
 
-    <div class="form-row form-row--2col">
+    <div class="form-row form-row--3col">
       <div class="form-group">
         <label>Irányítószám <span class="req">*</span></label>
         <input name="irsz" type="text" required>
@@ -214,13 +214,6 @@
       <div class="form-group">
         <label>Város <span class="req">*</span></label>
         <input name="telepules" type="text" required>
-      </div>
-    </div>
-
-    <div class="form-row form-row--2col">
-      <div class="form-group">
-        <label>Megye</label>
-        <input name="megye" type="text">
       </div>
       <div class="form-group">
         <label>Utca, házszám <span class="req">*</span></label>
@@ -243,8 +236,12 @@
   <input type="hidden" name="rendelesSzam">
   <input type="hidden" name="szamlaszamElotag">
 
+  <p style="font-size:14px;color:#6B7280;margin:16px 0 0 0;line-height:1.5;">
+    A díjbekérő generálását követően megjelenik a SZÁMLÁZZ.HU oldala, ahol letölthető a díjbekérő, ill. információk a fizetési lehetőségekről.
+  </p>
+
   <button type="submit" class="szamla-submit">
-    Számla generálása
+    Díjbekérő generálása
   </button>
 
   <div class="szamla-msg szamla-success"></div>

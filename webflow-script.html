@@ -55,27 +55,27 @@
     var discountVal = params.get("kedvezmeny") || "";
     var orderNumberVal = params.get("rendelesSzam") || "";
 
-    var html = '<h3>Számla összefoglaló</h3>';
+    var html = '<h3>összefoglaló</h3>';
 
     if (orderNumberVal) {
-      html += summaryRow("Rendelésszám", escapeHtml(orderNumberVal));
+      html += summaryRow("RENDELÉSSZÁM:", escapeHtml(orderNumberVal));
     }
-    html += summaryRow("Termék", escapeHtml(itemNameVal));
+    html += summaryRow("TERMÉK:", escapeHtml(itemNameVal));
     if (quantityVal) {
-      html += summaryRow("Mennyiség", escapeHtml(quantityVal) + (unitVal ? " " + escapeHtml(unitVal) : ""));
+      html += summaryRow("MENNYISÉG:", escapeHtml(quantityVal) + (unitVal ? " " + escapeHtml(unitVal) : ""));
     }
     if (netAmountVal) {
-      html += summaryRow("Nettó ár", formatHuf(netAmountVal));
+      html += summaryRow("NETTÓ ÁR:", formatHuf(netAmountVal));
     }
     if (vatAmountVal) {
-      html += summaryRow("ÁFA", formatHuf(vatAmountVal));
+      html += summaryRow("ÁFA:", formatHuf(vatAmountVal));
     }
     if (discountVal) {
-      html += summaryRow("Kedvezmény", escapeHtml(discountVal) + "%");
+      html += summaryRow("KEDVEZMÉNY:", escapeHtml(discountVal) + "%");
     }
     if (grossAmountVal) {
       html += '<div class="summary-row summary-total">';
-      html += '<span class="summary-label">Bruttó összeg</span>';
+      html += '<span class="summary-label">BRUTTÓ ÖSSZEG:</span>';
       html += '<span class="summary-value">' + formatHuf(grossAmountVal) + '</span>';
       html += '</div>';
     }
