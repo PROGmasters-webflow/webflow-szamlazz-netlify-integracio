@@ -127,7 +127,7 @@ function buildXml(data: SzamlaRequest, items: SzamlaItem[]): string {
     <fizetesiHataridoDatum>${addDays(dueDays)}</fizetesiHataridoDatum>
     <fizmod>${escapeXml(fizmod)}</fizmod>
     <penznem>${escapeXml(penznem)}</penznem>
-    <szamlaNyelve>${escapeXml(nyelv)}</szamlaNyelve>${elotag ? `\n    <szamlaszamElotag>${escapeXml(elotag)}</szamlaszamElotag>` : ""}${rendelesSzam ? `\n    <rendelesSzam>${escapeXml(rendelesSzam)}</rendelesSzam>` : ""}${megjegyzes ? `\n    <megjegyzes>${escapeXml(megjegyzes)}</megjegyzes>` : ""}
+    <szamlaNyelve>${escapeXml(nyelv)}</szamlaNyelve>${megjegyzes ? `\n    <megjegyzes>${escapeXml(megjegyzes)}</megjegyzes>` : ""}${rendelesSzam ? `\n    <rendelesSzam>${escapeXml(rendelesSzam)}</rendelesSzam>` : ""}${elotag ? `\n    <szamlaszamElotag>${escapeXml(elotag)}</szamlaszamElotag>` : ""}
   </fejlec>
   <elado>
     <bank>${escapeXml(env("ELADO_BANK", "OTP Bank"))}</bank>
